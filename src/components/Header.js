@@ -1,5 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import Navbar from './Navbar';
+
 import MainLogo from '../assets/images/home-logo.svg'
 import SearchImg from '../assets/images/search-icon.svg'
 
@@ -19,6 +22,7 @@ export default function Header() {
             <img src={SearchImg} alt="search icon" />
           </SearchIcon>
         </Search>
+        <Navbar />
       </Content>
     </Head>
   )
