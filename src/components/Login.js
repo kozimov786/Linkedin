@@ -3,12 +3,17 @@ import styled from 'styled-components';
 import LogoImg from '../assets/images/login-logo.svg'
 import HeroImg from '../assets/images/login-hero.svg'
 import GoogleImg from '../assets/images/google.svg'
+import { connect } from 'react-redux';
+
+import { signInApi } from '../actions';
+import { Navigate } from 'react-router';
 
 
 
-export default function Login() {
+function Login(props) {
   return (
     <Container>
+      {props.user && <Navigate to='/home' />}
       <Nav>
         <a href="/">
           <img src={LogoImg} alt="logo of linkedin" width='135' height='34' />
@@ -21,10 +26,10 @@ export default function Login() {
       <Section>
         <Hero>
           <h1>Welcome to proffessional community</h1>
-          <img src={HeroImg} alt="hero img" width='600' height='570' />
+          <img className='hero-img' src={HeroImg} alt="hero img" />
         </Hero>
         <Form>
-          <Google>
+          <Google onClick={() => props.signIn()}>
             <img src={GoogleImg} alt="google img" />
             <p>Sign in with Google</p>
           </Google>
@@ -35,8 +40,8 @@ export default function Login() {
 }
 
 const Container = styled.div`
- max-width: 1128px;
- padding: 0 25px;
+ max-width: 1168px;
+ padding: 0 20px;
  margin: 0 auto;
 `
 const Nav = styled.nav`
@@ -100,9 +105,14 @@ const Hero = styled.div`
      font-size: 20px;
      line-height: 2;
    }
-   img{
-     width: 100%;
-     display: block;
+  }
+  @media only screen and (max-width:968px){
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-img{
+     width: 680px;
+     height: auto;
      @media only screen and (max-width:968px){
      width: 480px;
      height: auto;
@@ -112,11 +122,6 @@ const Hero = styled.div`
      height: auto;
     }
    }
-  }
-  @media only screen and (max-width:968px){
-    flex-direction: column;
-    justify-content: center;
-  }
 `
 const Form = styled.div`
  margin-top: -120px;
@@ -134,7 +139,9 @@ const Google = styled.button`
  cursor: pointer;
  transition: background 0.3s ease;
  img{
-   margin-right: 20px;
+   margin-right: 10px;
+   width: 28px;
+   height: auto;
  }
  p{
    font-size: 18px;
@@ -144,3 +151,16 @@ const Google = styled.button`
    background-color: rgba(0,0,0,0.06);
  }
 `
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.user
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signIn: () => (dispatch(signInApi()))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

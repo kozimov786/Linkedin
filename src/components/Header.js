@@ -31,6 +31,7 @@ export default function Header() {
 const Head = styled.header`
  background-color: #fff;
  position: fixed;
+ z-index: 1000;
  top: 0;
  left: 0;
  width: 100%;
@@ -40,7 +41,7 @@ const Head = styled.header`
 `
 
 const Content = styled.div`
- max-width: 1128px;
+ max-width: 1168px;
  margin: 0 auto;
  padding-left: 20px;
  padding-right: 20px;

@@ -1,4 +1,7 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { signInApi, signOutApi } from '../actions'
+
 import styled from 'styled-components'
 import homeIcon from '../assets/images/nav-home.svg'
 import netIcon from '../assets/images/nav-network.svg'
@@ -9,7 +12,7 @@ import UserImg from '../assets/images/user.svg'
 import downArrow from '../assets/images/down-icon.svg'
 import workImg from '../assets/images/nav-work.svg'
 
-export default function Navbar() {
+function Navbar(props) {
   return (
     <Nav>
       <NavListWrap>
@@ -50,13 +53,15 @@ export default function Navbar() {
 
         <User>
           <a>
-            <img src={UserImg} alt="User img" />
+            {props.user && props.user.photoURL ? <img src={props.user.photoURL} alt="user img" /> :
+              < img src={UserImg} alt="User img" />
+            }
             <div>
               <span>Me</span>
               <img className='arrow' src={downArrow} alt="Down arrow" />
             </div>
           </a>
-          <SignOut>
+          <SignOut onClick={() => props.signOut()}>
             <a>Sign Out</a>
           </SignOut>
         </User>
@@ -184,3 +189,16 @@ position: relative;
 const Work = styled(User)`
   border-left:1px solid rgba(0,0,0,0.08);
 `
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.user
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signOut: () => dispatch(signOutApi())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Navbar)
