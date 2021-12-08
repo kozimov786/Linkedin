@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import { postArticleApi } from '../actions';
+import { Timestamp } from 'firebase/firestore'
+
+
 import closeIcon from '../assets/images/close.svg'
 import UserImg from '../assets/images/user.svg'
 import shareImg from '../assets/images/share-img.svg'
@@ -13,14 +18,15 @@ import shareComment from '../assets/images/comments.svg'
 
 
 
-function PostModal({ show, handleClick }) {
+function PostModal(props) {
 
   const [editText, setEditText] = useState('')
   const [shareImage, setShareImage] = useState('')
+  const [prog, setProg] = useState(0)
 
   const reset = (e) => {
     setEditText('')
-    handleClick(e)
+    props.handleClick(e)
   }
 
   const ImagesClick = (e) => {
@@ -32,9 +38,25 @@ function PostModal({ show, handleClick }) {
     }
     setShareImage(image)
   }
+  const postShare = (e) => {
+    e.preventDefault()
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+
+    const payload = {
+      image: shareImage,
+      user: props.user,
+      description: editText,
+      createdAt: Timestamp.fromDate(new Date("December 7, 2021")),
+    }
+    props.postShare(payload)
+    reset(e)
+    console.log(payload);
+  }
   return (
     <>
-      {show === "open" && <ModalWrapper show={show}>
+      {props.show === "open" && <ModalWrapper show={props.show}>
         <Modal>
           <Header>
             <h2>Create a post</h2>
@@ -44,8 +66,8 @@ function PostModal({ show, handleClick }) {
           </Header>
           <SharedContent>
             <UserInfo>
-              <img src={UserImg} alt="user img" />
-              <span>Name</span>
+              {props.user.photoURL ? <img src={props.user.photoURL} alt='user' /> : <img src={UserImg} alt="user img" />}
+              <span>{props.user.displayName}</span>
             </UserInfo>
             <Editor>
               <textarea
@@ -56,6 +78,7 @@ function PostModal({ show, handleClick }) {
               />
               <UploadImg>
                 {shareImage && <img src={URL.createObjectURL(shareImage)} alt='images' />}
+                {prog && <h2>Upload {prog} % </h2>}
               </UploadImg>
             </Editor>
           </SharedContent>
@@ -94,7 +117,9 @@ function PostModal({ show, handleClick }) {
                 Anyone
               </AssetButton>
             </AttachAssets>
-            <SendPost disabled={!editText ? true : false}>Post</SendPost>
+            <SendPost disabled={!editText ? true : false}
+              onClick={e => postShare(e)}
+            >Post</SendPost>
           </ShareCreation>
         </Modal>
       </ModalWrapper>}
@@ -229,4 +254,14 @@ const UploadImg = styled.div`
     width: 100%;
   }
 `
-export default PostModal;
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user.user
+  }
+}
+const mapDispatchToProps = (dispatch) => ({
+  postShare: (payload) => dispatch(postArticleApi(payload))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostModal);

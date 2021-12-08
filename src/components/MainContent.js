@@ -7,7 +7,7 @@ import PostModal from './PostModal';
 
 
 
-export default function MainContent() {
+export default function MainContent(props) {
   const [show, setShow] = useState('close')
 
   const handleClick = (e) => {
@@ -30,12 +30,9 @@ export default function MainContent() {
   return (
     <Content>
       <Share show={show} setShow={setShow} handleClick={handleClick} />
-      <Posts />
-      <Posts />
-      <Posts />
-      <Posts />
-      <Posts />
-      <Posts />
+      <Loader>
+        {props.loading && <span>Uploading</span>}
+      </Loader>
       <Posts />
       <PostModal show={show} setShow={setShow} handleClick={handleClick} />
     </Content>
@@ -44,4 +41,10 @@ export default function MainContent() {
 const Content = styled.div`
  width: 100%;
  max-width: 540px;
+`
+const Loader = styled.div`
+ text-align: center;
+ img{
+   width: 30px;
+ }
 `
